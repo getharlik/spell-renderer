@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "spell-renderer",
+	"version": "${version}",
+	"name": "spell-renderer",
+	"description": "A fast, lightweight render system.",
+	"authors": [
+		"harlik"
+	],
+	"contact": {
+		"sources": "https://github.com/harlikin/spell-renderer"
+	},
+	"license": "MIT",
+	"icon": "assets/spell-renderer/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.harlik.SpellRenderer"
+		]
+	},
+	"mixins": [
+		"spell-renderer.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.5",
+		"minecraft": "~1.21.8",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
