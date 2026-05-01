@@ -8,13 +8,13 @@
 		"harlik"
 	],
 	"contact": {
-		"sources": "https://github.com/harlikin/spell-renderer"
+		"sources": "https://github.com/getharlik/spell-renderer"
 	},
 	"license": "MIT",
 	"icon": "assets/spell-renderer/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
+		"client": [
 			"dev.harlik.SpellRenderer"
 		]
 	},

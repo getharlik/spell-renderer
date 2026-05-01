@@ -3,7 +3,8 @@
 	"package": "dev.harlik.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+      "GameRendererMixin",
+      "MinecraftMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
