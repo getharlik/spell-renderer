@@ -75,8 +75,17 @@ public class FontManager {
             glyphs.put(cp, new Glyph(cp, advance, pl, pb, pr, pt, al, ab, ar, at, visible));
         }
 
+        Map<String, Integer> names = new HashMap<>();
+        if (root.has("names")) {
+            JsonObject icons = root.getAsJsonObject("names");
+            for (var icon : icons.entrySet()) {
+                names.put(icon.getKey(), icon.getValue().getAsInt());
+            }
+        }
+
         Font font = new Font(
                 glyphs,
+                names,
                 metrics.get("lineHeight").getAsFloat(),
                 metrics.get("ascender").getAsFloat(),
                 metrics.get("descender").getAsFloat(),
@@ -88,7 +97,7 @@ public class FontManager {
         );
 
         fonts.put(key, font);
-        SpellRenderer.LOGGER.info("Loaded font '{}' ({}) with {} glyphs", key, baseName, glyphs.size());
+//        SpellRenderer.LOGGER.info("Loaded font '{}' ({}) with {} glyphs", key, baseName, glyphs.size());
     }
 
     public Font get(String key) {

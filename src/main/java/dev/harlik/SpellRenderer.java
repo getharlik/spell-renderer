@@ -37,12 +37,13 @@ public class SpellRenderer implements ClientModInitializer {
                 Builder.rect().pos(100, 15).radius(12, 0.6f).size(75, 100).color(Color.WHITE, Color.BLACK, Color.WHITE, Color.BLACK).submit();
                 Builder.image(ResourceLocation.fromNamespaceAndPath(SpellRenderer.MOD_ID, "icon.png"))
                         .pos(200, 15).radius(24, 0.6f).size(128, 128).submit();
-                Builder.text("Hello, World!").pos(10, 200).size(48).color(Color.WHITE).submit();
+                Builder.text("AV T. To r.").pos(10, 200).size(48).color(Color.WHITE).submit();
                 Builder.glass()
                         .pos(272, 15)
                         .size(200, 120)
                         .radius(24, 0.6f)
                         .submit();
+                Builder.icon("backward").font("icons").size(32).pos(300, 200).submit();
             });
         }
 	}

@@ -25,4 +25,8 @@ public class Builder {
     public static ShapeText text(String text) {
         return new ShapeText(BatchManager.INSTANCE.getText(),  text);
     }
+
+    public static ShapeIcon icon(String icon) {
+        return new ShapeIcon(BatchManager.INSTANCE.getText(), icon);
+    }
 }
