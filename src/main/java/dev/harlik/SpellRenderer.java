@@ -48,7 +48,7 @@ public class SpellRenderer implements ClientModInitializer {
         }
 	}
 
-    public static void bindGUIFramebuffer() { // Framebuffer 0 - right before mojang's swap, after evrth is drawn
+    public static void bindGUIFramebuffer() { // Framebuffer 0 - right after mojang's swap, after evrth is drawn
         var window = Minecraft.getInstance().getWindow();
         GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, 0);
         GlStateManager._viewport(0, 0, window.getWidth(), window.getHeight());

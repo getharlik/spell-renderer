@@ -5,7 +5,6 @@ import lombok.Getter;
 
 public class Font {
 
-    @Getter
     private final Map<Integer, Glyph> glyphs;
     private final Map<String, Integer> names;
     @Getter

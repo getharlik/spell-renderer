@@ -24,6 +24,15 @@ public class TextMeasure {
         return Math.max(maxWidth, lineWidth);
     }
 
+    public float getIconWidth(String fontKey, String icon, float size) {
+        Font font = FontManager.INSTANCE.get(fontKey);
+        if (font == null) return 0;
+
+        Glyph g = font.getGlyphByName(icon);
+        if (g == null) return 0;
+        return g.advance() * size;
+    }
+
     public float getHeight(String fontKey, float size) {
         Font font = FontManager.INSTANCE.get(fontKey);
         if (font == null) return 0;

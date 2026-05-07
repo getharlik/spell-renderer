@@ -10,8 +10,7 @@ A fast, lightweight OpenGL wrapper for Minecraft, designed for rendering 2D obje
 - **MSDF text rendering** - crisp text at any scale via signed distance field fonts.
 - **Glass effect** - frosted/blurred panel rendering for modern UI looks.
 - **DPI scaling** - ability to change scale of the elements.
-- **Render Context** - different context for different scenarios: GUI, HUD. (WORLD is in development!) 
-
+- **Render Context** - different context for different scenarios: GUI, HUD. (WORLD is in development!)`
 
 ## Requirements
 
@@ -57,7 +56,7 @@ Recomended flags:
 
 **2.** For icons add `"names": {"name": unicode}` to your font's json.
 
-```json
+```jsonc
 {
   "atlas":{"type":"msdf","distanceRange":4,"distanceRangeMiddle":0,"size":48,"width":84,"height":84,"yOrigin":"bottom"},
   "metrics":{"emSize":1,"lineHeight":1.0900000000000001,"ascender":0.84999999999999998,"descender":-0.14999999999999999,"underlineY":0.01,"underlineThickness":0},
@@ -73,7 +72,7 @@ Recomended flags:
 
 ```java
 ClientLifecycleEvents.CLIENT_STARTED.register(client -> { // ONLY THIS EVENT. NOT onInitializeClient()!
-    load("key", ResourceLocation.fromNamespaceAndPath("Your mod id", "fonts/inter"));
+    FontManager.load("key", ResourceLocation.fromNamespaceAndPath("Your mod id", "fonts/inter"));
     // WRITE THE FILE NAME WITHOUT THE EXTENSION e.g. fonts/inter.png -> fonts/inter
 });
 ```
