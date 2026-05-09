@@ -2,6 +2,8 @@
 
 A fast, lightweight OpenGL wrapper for Minecraft, designed for rendering 2D objects with a clean, fluent API.
 
+![preview](.github/assets/preview.png)
+
 ## Features
 
 - **Shape builder** - chainable API for positioning, sizing, coloring, and rounding.
@@ -11,6 +13,7 @@ A fast, lightweight OpenGL wrapper for Minecraft, designed for rendering 2D obje
 - **Glass effect** - frosted/blurred panel rendering for modern UI looks.
 - **DPI scaling** - ability to change scale of the elements.
 - **Render Context** - different context for different scenarios: GUI, HUD. (WORLD is in development!)`
+- **Scissors** - ability to set a region and draw without going out of its bounds.
 
 ## Requirements
 
@@ -18,6 +21,16 @@ A fast, lightweight OpenGL wrapper for Minecraft, designed for rendering 2D obje
 - Fabric Loader: `>=0.18.5`
 - Fabric API: `0.136.1+1.21.8`
 - Java: `21`
+
+## Installation
+
+### Gradle
+```gradle
+```
+
+### Maven
+```maven
+```
 
 ## Usage
 
@@ -97,4 +110,3 @@ MIT
 1. Implement kernings
 3. Implement 3d world rendering
 4. Glass blur improvements
-5. Add scissors

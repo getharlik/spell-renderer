@@ -9,6 +9,7 @@ import dev.harlik.api.RenderContext;
 import dev.harlik.api.builder.Builder;
 import dev.harlik.api.font.FontManager;
 import dev.harlik.api.scale.Scale;
+import dev.harlik.api.scissors.Scissors;
 import dev.harlik.impl.GlState;
 import dev.harlik.impl.batch.BatchManager;
 import dev.harlik.impl.shader.ShaderManager;
@@ -33,17 +34,40 @@ public class SpellRenderer implements ClientModInitializer {
 
         if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
             SpellRenderer.on(RenderContext.GUI, () -> {
-                Builder.rect().pos(15, 15, 10).radius(8).size(100, 75).color(Color.WHITE).submit();
-                Builder.rect().pos(100, 15).radius(12, 0.6f).size(75, 100).color(Color.WHITE, Color.BLACK, Color.WHITE, Color.BLACK).submit();
+                Builder.rect()
+                        .pos(10, 10, 2)
+                        .size(128, 128)
+                        .radius(16, 0.6f)
+                        .color(Color.GRAY)
+                        .submit();
+                Builder.rect()
+                        .pos(100, 100)
+                        .size(96, 64)
+                        .radius(12)
+                        .color(Color.WHITE, Color.BLACK, Color.WHITE, Color.BLACK)
+                        .submit();
                 Builder.image(ResourceLocation.fromNamespaceAndPath(SpellRenderer.MOD_ID, "icon.png"))
-                        .pos(200, 15).radius(24, 0.6f).size(128, 128).submit();
-                Builder.text("AV T. To r.").pos(10, 200).size(48).color(Color.WHITE).submit();
-                Builder.glass()
-                        .pos(272, 15)
-                        .size(200, 120)
+                        .pos(180, 10)
+                        .size(128, 128)
                         .radius(24, 0.6f)
                         .submit();
-                Builder.icon("backward").font("icons").size(32).pos(300, 200).submit();
+                Builder.glass()
+                        .pos(260, 10)
+                        .size(128, 128)
+                        .radius(16)
+                        .submit();
+                Builder.text("Spell-renderer")
+                        .pos(10, 200)
+                        .size(48)
+                        .color(Color.WHITE)
+                        .submit();
+                Builder.icon("backward")
+                        .font("icons")
+                        .size(32)
+                        .pos(10, 256)
+                        .submit();
+                Builder.circle()
+                        .pos(500, 50).radius(32).color(Color.BLACK).submit();
             });
         }
 	}
@@ -65,6 +89,7 @@ public class SpellRenderer implements ClientModInitializer {
 
 	public static void renderFrame(RenderContext context) {
 		Scale.INSTANCE.updateMatrix();
+        Scissors.clear();
 
 		try (var ignored = GlState.capture()) {
             if (context.equals(RenderContext.GUI)) {

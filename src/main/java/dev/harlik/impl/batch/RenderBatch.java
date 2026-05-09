@@ -1,5 +1,7 @@
 package dev.harlik.impl.batch;
 
+import dev.harlik.api.scissors.Region;
+import dev.harlik.api.scissors.Scissors;
 import dev.harlik.impl.buffer.VertexBuffer;
 import dev.harlik.impl.buffer.VertexFormat;
 import dev.harlik.impl.shader.Shader;
@@ -12,7 +14,7 @@ import static org.lwjgl.opengl.GL33.*;
 
 public class RenderBatch {
 
-    record Entry(float z, float[] data, int textureId) {}
+    record Entry(float z, float[] data, int textureId, Region scissors) {}
 
     private Shader shader;
     private VertexFormat format;
@@ -35,7 +37,7 @@ public class RenderBatch {
     }
 
     public void addShape(float z, float[] vertexData, int textureId) {
-        entries.add(new Entry(z, vertexData, textureId));
+        entries.add(new Entry(z, vertexData, textureId, Scissors.current()));
     }
 
     public RenderBatch preDraw(Runnable preDraw) {

@@ -1,6 +1,7 @@
 package dev.harlik.api;
 
 import dev.harlik.SpellRenderer;
+import dev.harlik.api.scissors.Scissors;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +18,13 @@ public enum RenderContext {
 
     public void fire() {
         for (Runnable listener : listeners) {
+            int depth = Scissors.depth();
             try {
                 listener.run();
             } catch (Throwable t) {
                 SpellRenderer.LOGGER.error("Listener in {} threw", this, t);
+            } finally {
+                Scissors.truncateTo(depth);
             }
         }
     }
