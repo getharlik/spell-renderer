@@ -26,10 +26,42 @@ A fast, lightweight OpenGL wrapper for Minecraft, designed for rendering 2D obje
 
 ### Gradle
 ```gradle
+repositories {
+    maven { url = "https://api.modrinth.com/maven" }
+}
+
+dependencies {
+    modImplementation "maven.modrinth:spell-renderer:26.3"
+
+    // Optional: bundle Spell Renderer inside your mod JAR
+    // so users don't need to install it separately.
+    include "maven.modrinth:spell-renderer:26.3"
+}
 ```
 
 ### Maven
 ```maven
+<repositories>
+    <repository>
+        <id>modrinth</id>
+        <url>https://api.modrinth.com/maven</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>maven.modrinth</groupId>
+        <artifactId>spell-renderer</artifactId>
+        <version>26.3</version>
+    </dependency>
+</dependencies>
+```
+
+### fabric.mod.json
+```json
+"depends": {
+  "spell-renderer": "26.3"
+}
 ```
 
 ## Usage
@@ -103,7 +135,7 @@ ClientLifecycleEvents.CLIENT_STARTED.register(client -> { // ONLY THIS EVENT. NO
 
 ## License
 
-MIT
+[MIT](LICENSE)
 
 ## TODO
 
