@@ -27,8 +27,9 @@ public class ShaderManager {
     public void load() {
         register("rectangle", "rectangle");
         register("rectangle", "image");
-        register("rectangle", "glass");
+        register("glass", "glass");
         register("text", "text");
+        register("blur", "kawase_down");
 
         BatchManager.INSTANCE.init();
     }

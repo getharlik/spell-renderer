@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import static org.lwjgl.opengl.GL33.*;
 
 public class BatchManager {
@@ -33,7 +32,7 @@ public class BatchManager {
         );
         glass = new RenderBatch(
                 ShaderManager.INSTANCE.getShader("glass"),
-                VertexFormat.RECTANGLE,
+                VertexFormat.GLASS,
                 GL_TRIANGLES
         );
         text = new RenderBatch(
@@ -45,19 +44,20 @@ public class BatchManager {
         Shader glassShader = ShaderManager.INSTANCE.getShader("glass");
         int[] savedUnit1Texture = new int[1];
         glass.preDraw(() -> {
-            var window = Minecraft.getInstance().getWindow();
-            int w = window.getWidth();
-            int h = window.getHeight();
-
-            BackgroundSnapshot.INSTANCE.capture(w, h);
+            int[] vp = new int[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+            int w = vp[2];
+            int h = vp[3];
 
             glActiveTexture(GL_TEXTURE1);
             savedUnit1Texture[0] = glGetInteger(GL_TEXTURE_BINDING_2D);
-            glBindTexture(GL_TEXTURE_2D, BackgroundSnapshot.INSTANCE.getTextureId());
+            BlurPyramid.INSTANCE.build(w, h);
             glActiveTexture(GL_TEXTURE0);
 
             glassShader.setUniform1i("uBackground", 1);
             glassShader.setUniform2f("uResolution", (float) w, (float) h);
+            glassShader.setUniform1f("uScale", w / Scale.INSTANCE.getViewportWidth());
+            glassShader.setUniform1f("uMaxLod", BlurPyramid.INSTANCE.getLevels());
         });
         glass.postDraw(() -> {
             glActiveTexture(GL_TEXTURE1);
@@ -132,7 +132,7 @@ public class BatchManager {
         image.destroy();
         text.destroy();
         glass.destroy();
-        BackgroundSnapshot.INSTANCE.destroy();
+        BlurPyramid.INSTANCE.destroy();
     }
 
     private record EntryRef(RenderBatch batch, RenderBatch.Entry entry) {}

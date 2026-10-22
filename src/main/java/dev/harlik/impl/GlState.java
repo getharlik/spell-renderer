@@ -32,7 +32,7 @@ public final class GlState implements AutoCloseable {
         texture2d = glGetInteger(GL_TEXTURE_BINDING_2D);
         drawFbo = glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING);
         glGetIntegerv(GL_VIEWPORT, viewport);
-        glGetIntegerv(GL_SCISSOR_TEST, scissorBox);
+        glGetIntegerv(GL_SCISSOR_BOX, scissorBox);
     }
 
     public static GlState capture() {
@@ -49,7 +49,7 @@ public final class GlState implements AutoCloseable {
         glBindTexture(GL_TEXTURE_2D, texture2d);
         GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, drawFbo);
         GlStateManager._viewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-        glScissor(scissorBox[0], scissorBox[1], scissorBox[2], viewport[3]);
+        glScissor(scissorBox[0], scissorBox[1], scissorBox[2], scissorBox[3]);
     }
 
     @Override

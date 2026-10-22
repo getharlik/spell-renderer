@@ -10,7 +10,7 @@ A fast, lightweight OpenGL wrapper for Minecraft, designed for rendering 2D obje
 - **Batched rendering** - shapes of the same type are merged into a single draw call.
 - **Custom shaders** - dedicated shader programs for rectangles, images, text, and glass.
 - **MSDF text rendering** - crisp text at any scale via signed distance field fonts.
-- **Glass effect** - frosted/blurred panel rendering for modern UI looks.
+- **Glass effect** - frosted or liquid glass panels with adjustable blur, refraction, RGB split, saturation and rim light.
 - **DPI scaling** - ability to change scale of the elements.
 - **Render Context** - different context for different scenarios: GUI, HUD. (WORLD is in development!)`
 - **Scissors** - ability to set a region and draw without going out of its bounds.
@@ -136,6 +136,24 @@ ClientLifecycleEvents.CLIENT_STARTED.register(client -> { // ONLY THIS EVENT. NO
 
 Every shape also exposes `width()`, `height()` and `bounds()` (a `Region` in screen space; circles are offset by their radius since they are positioned by center).
 
+### Glass
+
+```java
+Builder.glass()
+        .pos(20, 20)
+        .size(200, 120)
+        .radius(16)
+        .blur(16)          // blur radius in pixels, 0 = none (default 12)
+        .refraction(1.2f)  // lens bend at the edges, 0 = flat frosted glass (default 1)
+        .chromatic(4)      // RGB split at the edges in pixels, 0 = off (default 0)
+        .saturation(1.4f)  // 0 = grayscale, 1 = unchanged, >1 = vivid (default 1)
+        .highlight(0.3f)   // rim light brightness, 0 = off (default 0)
+        .color(Color.WHITE) // tint
+        .submit();
+```
+
+Blur cost is the same for any radius. `chromatic` takes three times as many texture reads, so leave it at 0 when you don't need it.
+
 ### Dragging
 
 Call `.draggable("id")` on a shape to let the user drag it with the left mouse button. Anything parented to it moves with it and can be used to grab it.
@@ -169,5 +187,4 @@ DragManager.INSTANCE.reset("panel");                                            
 ## TODO
 
 1. Implement kernings
-3. Implement 3d world rendering
-4. Glass blur improvements
+2. Implement 3d world rendering

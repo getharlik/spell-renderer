@@ -7,6 +7,7 @@ import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.harlik.api.RenderContext;
 import dev.harlik.api.builder.Builder;
+import dev.harlik.api.builder.shapes.ShapeGlass;
 import dev.harlik.api.font.FontManager;
 import dev.harlik.api.scale.Scale;
 import dev.harlik.api.scissors.Scissors;
@@ -52,11 +53,6 @@ public class SpellRenderer implements ClientModInitializer {
                         .size(128, 128)
                         .radius(24, 0.6f)
                         .submit();
-                Builder.glass()
-                        .pos(260, 10)
-                        .size(128, 128)
-                        .radius(16)
-                        .submit();
                 Builder.text("Spell-renderer")
                         .pos(10, 200)
                         .size(48)
@@ -70,8 +66,23 @@ public class SpellRenderer implements ClientModInitializer {
                 Builder.circle()
                         .pos(500, 50).radius(32).color(Color.BLACK).submit();
 
+                glassTest(10, "default", Builder.glass());
+                glassTest(155, "frosted", Builder.glass()
+                        .blur(16)
+                        .refraction(0));
+                glassTest(300, "liquid", Builder.glass()
+                        .blur(2)
+                        .refraction(0.9f)
+                        .chromatic(4));
+                glassTest(445, "vibrant", Builder.glass()
+                        .blur(32)
+                        .refraction(0)
+                        .saturation(1.6f)
+                        .highlight(0.35f)
+                        .color(new Color(255, 255, 255, 230)));
+
                 var panel = Builder.rect()
-                        .pos(50, 320, 5)
+                        .pos(50, 460, 5)
                         .size(250, 120)
                         .radius(12)
                         .color(Color.DARK_GRAY)
@@ -86,7 +97,7 @@ public class SpellRenderer implements ClientModInitializer {
             });
             SpellRenderer.on(RenderContext.HUD, () -> {
                 var hudPanel = Builder.rect()
-                        .pos(300, 320, 5)
+                        .pos(300, 460, 5)
                         .size(260, 80)
                         .radius(12)
                         .color(new Color(30, 60, 120))
@@ -107,6 +118,33 @@ public class SpellRenderer implements ClientModInitializer {
             });
         }
 	}
+
+    /** Dev only: a gradient backdrop with text, the glass overlapping its bottom edge, and a label. */
+    private static void glassTest(float x, String label, ShapeGlass glass) {
+        var backdrop = Builder.rect()
+                .pos(x, 300)
+                .size(130, 90)
+                .radius(8)
+                .color(Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN);
+        backdrop.submit();
+        Builder.text("Aa")
+                .pos(12, 16, 1)
+                .size(48)
+                .color(Color.BLACK)
+                .parent(backdrop)
+                .submit();
+        glass.pos(15, 45, 2)
+                .size(100, 70)
+                .radius(14)
+                .parent(backdrop)
+                .submit();
+        Builder.text(label)
+                .pos(0, 122, 1)
+                .size(16)
+                .color(Color.WHITE)
+                .parent(backdrop)
+                .submit();
+    }
 
     public static void bindGUIFramebuffer() { // Framebuffer 0 - right after mojang's swap, after evrth is drawn
         var window = Minecraft.getInstance().getWindow();

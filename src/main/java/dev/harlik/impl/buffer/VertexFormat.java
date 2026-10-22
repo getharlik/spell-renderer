@@ -31,7 +31,20 @@ public record VertexFormat(LinkedHashMap<String, Integer> attributes) {
             }}
     );
 
-    public static final VertexFormat TEXT = new VertexFormat(
+    public static final VertexFormat GLASS = new VertexFormat(
+            new LinkedHashMap<String, Integer>() {{
+                put("aPos", 2);
+                put("aSize", 2);
+                put("aColor", 4);
+                put("aRadius", 4);
+                put("aSmooth", 1);
+                put("aUV", 2);
+                put("aGlass", 4);
+                put("aHighlight", 1);
+            }}
+    );
+
+    public static final VertexFormat TEXT =new VertexFormat(
             new LinkedHashMap<String, Integer>() {{
                 put("aPos", 2);
                 put("aUV", 2);

@@ -10,6 +10,7 @@ public class ShapeGlass extends Shape<ShapeGlass> {
     private Color color = Color.WHITE;
     private float radiusTL, radiusTR, radiusBR, radiusBL;
     private float smoothness;
+    private float blur = 12, refraction = 1, chromatic = 0, saturation = 1, highlight = 0;
 
     public ShapeGlass(RenderBatch batch) {
         super(batch);
@@ -23,7 +24,7 @@ public class ShapeGlass extends Shape<ShapeGlass> {
 
     @Override
     protected void draw() {
-        int stride = VertexFormat.RECTANGLE.getFloats();
+        int stride = VertexFormat.GLASS.getFloats();
         float[] data = new float[6 * stride];
 
         float absX = absoluteX(), absY = absoluteY();
@@ -56,6 +57,11 @@ public class ShapeGlass extends Shape<ShapeGlass> {
         data[offset + 12] = smoothness;
         data[offset + 13] = u;
         data[offset + 14] = v;
+        data[offset + 15] = blur;
+        data[offset + 16] = refraction;
+        data[offset + 17] = chromatic;
+        data[offset + 18] = saturation;
+        data[offset + 19] = highlight;
     }
 
     /** Sets the top-left position in pixels */
@@ -113,6 +119,36 @@ public class ShapeGlass extends Shape<ShapeGlass> {
         this.radiusTR = radiusTR;
         this.radiusBR = radiusBR;
         this.radiusBL = radiusBL;
+        return this;
+    }
+
+    /** Sets the blur radius in pixels. 0 disables the blur. Default: 12 */
+    public ShapeGlass blur(float radius) {
+        this.blur = radius;
+        return this;
+    }
+
+    /** Sets how strongly the edges bend the background, like a lens. 0 is flat frosted glass. Default: 1 */
+    public ShapeGlass refraction(float strength) {
+        this.refraction = strength;
+        return this;
+    }
+
+    /** Sets the RGB split along the edges in pixels. 0 disables it, which is cheaper. Default: 0 */
+    public ShapeGlass chromatic(float amount) {
+        this.chromatic = amount;
+        return this;
+    }
+
+    /** Sets the saturation of the background. 0 is grayscale, 1 is unchanged, above 1 is more vivid. Default: 1 */
+    public ShapeGlass saturation(float saturation) {
+        this.saturation = saturation;
+        return this;
+    }
+
+    /** Sets the brightness of a thin rim light along the edge. 0 disables it. Default: 0 */
+    public ShapeGlass highlight(float strength) {
+        this.highlight = strength;
         return this;
     }
 }
