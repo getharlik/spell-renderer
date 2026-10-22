@@ -3,6 +3,7 @@ package dev.harlik.api.builder.shapes;
 import dev.harlik.api.font.Font;
 import dev.harlik.api.font.FontManager;
 import dev.harlik.api.font.Glyph;
+import dev.harlik.api.font.TextMeasure;
 import dev.harlik.impl.batch.RenderBatch;
 import dev.harlik.impl.buffer.VertexFormat;
 import java.awt.Color;
@@ -20,7 +21,16 @@ public class ShapeText extends Shape<ShapeText> {
     }
 
     @Override
-    public void submit() {
+    public float width() { return TextMeasure.getWidth(fontKey, text, size); }
+
+    @Override
+    public float height() {
+        int lines = 1 + (int) text.chars().filter(c -> c == '\n').count();
+        return TextMeasure.getHeight(fontKey, size) * lines;
+    }
+
+    @Override
+    protected void draw() {
         if (text.isEmpty()) return;
         Font font = FontManager.INSTANCE.get(fontKey);
         if (font == null) return;

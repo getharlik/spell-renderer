@@ -16,7 +16,13 @@ public class ShapeGlass extends Shape<ShapeGlass> {
     }
 
     @Override
-    public void submit() {
+    public float width() { return width; }
+
+    @Override
+    public float height() { return height; }
+
+    @Override
+    protected void draw() {
         int stride = VertexFormat.RECTANGLE.getFloats();
         float[] data = new float[6 * stride];
 

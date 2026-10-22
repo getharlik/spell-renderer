@@ -1,5 +1,6 @@
 package dev.harlik.api.builder.shapes;
 
+import dev.harlik.api.scissors.Region;
 import dev.harlik.impl.batch.RenderBatch;
 import dev.harlik.impl.buffer.VertexFormat;
 import java.awt.Color;
@@ -14,7 +15,17 @@ public class ShapeCircle extends Shape<ShapeCircle> {
     }
 
     @Override
-    public void submit() {
+    public float width() { return radius * 2; }
+
+    @Override
+    public float height() { return radius * 2; }
+
+    /** Circles are positioned by their center. */
+    @Override
+    public Region bounds() { return new Region(absoluteX() - radius, absoluteY() - radius, width(), height()); }
+
+    @Override
+    protected void draw() {
         int stride = VertexFormat.RECTANGLE.getFloats();
         float size = radius * 2;
         float left = absoluteX() - radius, top = absoluteY() - radius;

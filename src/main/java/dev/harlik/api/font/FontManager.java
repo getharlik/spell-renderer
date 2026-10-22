@@ -24,6 +24,7 @@ public class FontManager {
     public void init() {
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
             load("spell_fallback", ResourceLocation.fromNamespaceAndPath(SpellRenderer.MOD_ID, "fonts/inter"));
+
             fallback = fonts.get("spell_fallback");
         });
     }

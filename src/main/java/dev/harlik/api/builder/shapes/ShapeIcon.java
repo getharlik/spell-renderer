@@ -4,6 +4,7 @@ import dev.harlik.SpellRenderer;
 import dev.harlik.api.font.Font;
 import dev.harlik.api.font.FontManager;
 import dev.harlik.api.font.Glyph;
+import dev.harlik.api.font.TextMeasure;
 import dev.harlik.impl.batch.RenderBatch;
 import dev.harlik.impl.buffer.VertexFormat;
 import java.awt.Color;
@@ -21,7 +22,13 @@ public class ShapeIcon extends Shape<ShapeIcon> {
     }
 
     @Override
-    public void submit() {
+    public float width() { return TextMeasure.getIconWidth(fontKey, icon, size); }
+
+    @Override
+    public float height() { return TextMeasure.getHeight(fontKey, size); }
+
+    @Override
+    protected void draw() {
         if (icon.isEmpty()) return;
         Font font = FontManager.INSTANCE.get(fontKey);
         if (font == null) return;

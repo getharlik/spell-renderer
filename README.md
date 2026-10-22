@@ -14,6 +14,7 @@ A fast, lightweight OpenGL wrapper for Minecraft, designed for rendering 2D obje
 - **DPI scaling** - ability to change scale of the elements.
 - **Render Context** - different context for different scenarios: GUI, HUD. (WORLD is in development!)`
 - **Scissors** - ability to set a region and draw without going out of its bounds.
+- **Dragging** - make any shape and its children draggable with the left mouse button.
 
 ## Requirements
 
@@ -132,6 +133,34 @@ ClientLifecycleEvents.CLIENT_STARTED.register(client -> { // ONLY THIS EVENT. NO
 | `text`   | SDF-rendered string                         |
 | `glass`  | Frosted-glass blurred panel                 |
 | `icon`   | Mapped name parcing for icon fonts          |
+
+Every shape also exposes `width()`, `height()` and `bounds()` (a `Region` in screen space; circles are offset by their radius since they are positioned by center).
+
+### Dragging
+
+Call `.draggable("id")` on a shape to let the user drag it with the left mouse button. Anything parented to it moves with it and can be used to grab it.
+
+```java
+var panel = Builder.rect().pos(50, 50).size(200, 120).color(Color.DARK_GRAY).draggable("panel");
+panel.submit();
+
+Builder.text("Hello").pos(8, 8).parent(panel).submit(); // moves with, and grabs, the panel
+```
+
+- The id identifies the drag state across frames, so keep it stable and unique.
+- The draggable shape is clamped so it never leaves the screen.
+- A drag starts once the cursor moves more than 3px after the press. The press itself is consumed, so it never reaches a Minecraft screen underneath.
+- Only the visible part of a shape inside `Scissors` can be grabbed.
+- `GUI` draggables work whenever they are submitted; `HUD` draggables only while the chat is open. If both overlap, `GUI` wins.
+- Offsets are kept in memory only. Persist them yourself:
+
+```java
+float x = DragManager.INSTANCE.offsetX("panel"), y = DragManager.INSTANCE.offsetY("panel"); // save
+DragManager.INSTANCE.setOffset("panel", x, y);                                            // load
+DragManager.INSTANCE.reset("panel");                                                      // back to original position
+```
+
+`DragManager.INSTANCE.isDragging()` and `getActiveId()` tell you what is being dragged right now.
 
 ## License
 

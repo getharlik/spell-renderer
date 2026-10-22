@@ -12,6 +12,7 @@ import dev.harlik.api.scale.Scale;
 import dev.harlik.api.scissors.Scissors;
 import dev.harlik.impl.GlState;
 import dev.harlik.impl.batch.BatchManager;
+import dev.harlik.impl.drag.DragManager;
 import dev.harlik.impl.shader.ShaderManager;
 import java.awt.Color;
 import net.fabricmc.api.ClientModInitializer;
@@ -68,6 +69,41 @@ public class SpellRenderer implements ClientModInitializer {
                         .submit();
                 Builder.circle()
                         .pos(500, 50).radius(32).color(Color.BLACK).submit();
+
+                var panel = Builder.rect()
+                        .pos(50, 320, 5)
+                        .size(250, 120)
+                        .radius(12)
+                        .color(Color.DARK_GRAY)
+                        .draggable("test-panel");
+                panel.submit();
+                Builder.text("dragable (GUI ctx)")
+                        .pos(12, 12)
+                        .size(24)
+                        .color(Color.WHITE)
+                        .parent(panel)
+                        .submit();
+            });
+            SpellRenderer.on(RenderContext.HUD, () -> {
+                var hudPanel = Builder.rect()
+                        .pos(300, 320, 5)
+                        .size(260, 80)
+                        .radius(12)
+                        .color(new Color(30, 60, 120))
+                        .draggable("test-hud-panel");
+                hudPanel.submit();
+                Builder.text("draggable (HUD ctx)")
+                        .pos(12, 12)
+                        .size(24)
+                        .color(Color.WHITE)
+                        .parent(hudPanel)
+                        .submit();
+                Builder.circle()
+                        .pos(196, 56)
+                        .radius(10)
+                        .color(Color.ORANGE)
+                        .parent(hudPanel)
+                        .submit();
             });
         }
 	}
@@ -90,6 +126,8 @@ public class SpellRenderer implements ClientModInitializer {
 	public static void renderFrame(RenderContext context) {
 		Scale.INSTANCE.updateMatrix();
         Scissors.clear();
+        DragManager.INSTANCE.beginFrame(context);
+        DragManager.INSTANCE.update();
 
 		try (var ignored = GlState.capture()) {
             if (context.equals(RenderContext.GUI)) {
