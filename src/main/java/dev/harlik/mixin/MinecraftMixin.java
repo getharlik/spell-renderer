@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftMixin {
 
     /** Right before the finished frame is copied to the window, on top of everything vanilla drew. */
-    @Inject(method = "renderFrame", at = @At(value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/systems/GpuSurface;blitFromTexture(Lcom/mojang/blaze3d/systems/CommandEncoder;Lcom/mojang/blaze3d/textures/GpuTextureView;)V"))
+    @Inject(method = "runTick", at = @At(value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/pipeline/RenderTarget;blitToScreen()V"))
     private void spell$guiRender(boolean bl, CallbackInfo ci) {
         SpellRenderer.renderFrame(RenderContext.GUI);
     }

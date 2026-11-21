@@ -1,7 +1,7 @@
 package dev.harlik.impl.gpu;
 
 import com.mojang.blaze3d.buffers.GpuBuffer;
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.systems.RenderSystem;
 import java.nio.ByteBuffer;
 import net.minecraft.client.renderer.MappableRingBuffer;
 
@@ -34,7 +34,7 @@ public final class DynamicBuffer implements AutoCloseable {
         }
 
         GpuBuffer buffer = ring.currentBuffer();
-        try (GpuBufferSlice.MappedView view = buffer.map(0, size, false, true)) {
+        try (GpuBuffer.MappedView view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(buffer.slice(0, size), false, true)) {
             view.data().put(data);
         }
         written = true;

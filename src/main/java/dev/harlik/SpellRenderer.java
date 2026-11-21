@@ -30,6 +30,8 @@ public class SpellRenderer implements ClientModInitializer {
         FontManager.INSTANCE.init();
 
         if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            ClientLifecycleEvents.CLIENT_STARTED.register(client -> FontManager.INSTANCE.load(
+                    "icons", Identifier.fromNamespaceAndPath(MOD_ID, "fonts/icons_dev_ph")));
             DragManager.INSTANCE.setSnapper(SpellRenderer::snapTest);
             SpellRenderer.on(RenderContext.GUI, () -> {
                 Builder.rect()

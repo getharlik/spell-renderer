@@ -1,15 +1,15 @@
 package dev.harlik.impl.gpu;
 
-import com.mojang.blaze3d.GpuFormat;
-import com.mojang.blaze3d.PrimitiveTopology;
-import com.mojang.blaze3d.pipeline.BindGroupLayout;
 import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.BlendFactor;
+import com.mojang.blaze3d.platform.DepthTestFunction;
+import com.mojang.blaze3d.platform.DestFactor;
+import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.shaders.ShaderSource;
 import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import dev.harlik.SpellRenderer;
 import dev.harlik.impl.buffer.VertexFormat;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import net.minecraft.server.packs.resources.Resource;
 
 /**
  * Every render pipeline spell-renderer draws with. A pipeline bundles the shaders with the fixed state
- * (blend, cull, depth, vertex layout, bindings), so the same description works on the OpenGL and the Vulkan backend.
+ * (blend, cull, depth, vertex layout, uniforms and samplers).
  * Shader sources live in {@code assets/spell-renderer/shaders/core/}.
  */
 public final class SpellPipelines {
@@ -39,64 +39,47 @@ public final class SpellPipelines {
     public static final String BACKGROUND_SAMPLER = "uBackground";
     public static final String SOURCE_SAMPLER = "uSource";
 
-    private static final BindGroupLayout PROJECTION_LAYOUT = BindGroupLayout.builder()
-            .withUniform(PROJECTION_BLOCK, UniformType.UNIFORM_BUFFER)
-            .build();
-    private static final BindGroupLayout TEXTURE_LAYOUT = BindGroupLayout.builder()
-            .withSampler(TEXTURE_SAMPLER)
-            .build();
-    private static final BindGroupLayout ATLAS_LAYOUT = BindGroupLayout.builder()
-            .withSampler(ATLAS_SAMPLER)
-            .build();
-    private static final BindGroupLayout GLASS_LAYOUT = BindGroupLayout.builder()
-            .withSampler(BACKGROUND_SAMPLER)
-            .withUniform(GLASS_BLOCK, UniformType.UNIFORM_BUFFER)
-            .build();
-    private static final BindGroupLayout KAWASE_LAYOUT = BindGroupLayout.builder()
-            .withSampler(SOURCE_SAMPLER)
-            .withUniform(KAWASE_BLOCK, UniformType.UNIFORM_BUFFER)
-            .build();
-
     /** glBlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA) for color and alpha alike. BlendFunction.TRANSLUCENT blends alpha differently. */
-    private static final BlendFunction ALPHA_BLEND = new BlendFunction(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
+    private static final BlendFunction ALPHA_BLEND = new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
     private static final RenderPipeline.Snippet SHAPE = RenderPipeline.builder()
-            .withBindGroupLayout(PROJECTION_LAYOUT)
-            .withColorTargetState(new ColorTargetState(ALPHA_BLEND))
-            .withDepthStencilState(Optional.empty())
+            .withUniform(PROJECTION_BLOCK, UniformType.UNIFORM_BUFFER)
+            .withBlend(ALPHA_BLEND)
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withDepthWrite(false)
             .withCull(false)
-            .withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
             .buildSnippet();
 
     public static final RenderPipeline RECTANGLE = RenderPipeline.builder(SHAPE)
             .withLocation(id("pipeline/rectangle"))
             .withVertexShader(id("core/rectangle"))
             .withFragmentShader(id("core/rectangle"))
-            .withVertexBinding(0, VertexFormat.RECTANGLE.gpu())
+            .withVertexFormat(VertexFormat.RECTANGLE.gpu(), Mode.TRIANGLES)
             .build();
 
     public static final RenderPipeline IMAGE = RenderPipeline.builder(SHAPE)
             .withLocation(id("pipeline/image"))
             .withVertexShader(id("core/rectangle"))
             .withFragmentShader(id("core/image"))
-            .withBindGroupLayout(TEXTURE_LAYOUT)
-            .withVertexBinding(0, VertexFormat.RECTANGLE.gpu())
+            .withSampler(TEXTURE_SAMPLER)
+            .withVertexFormat(VertexFormat.RECTANGLE.gpu(), Mode.TRIANGLES)
             .build();
 
     public static final RenderPipeline TEXT = RenderPipeline.builder(SHAPE)
             .withLocation(id("pipeline/text"))
             .withVertexShader(id("core/text"))
             .withFragmentShader(id("core/text"))
-            .withBindGroupLayout(ATLAS_LAYOUT)
-            .withVertexBinding(0, VertexFormat.TEXT.gpu())
+            .withSampler(ATLAS_SAMPLER)
+            .withVertexFormat(VertexFormat.TEXT.gpu(), Mode.TRIANGLES)
             .build();
 
     public static final RenderPipeline GLASS = RenderPipeline.builder(SHAPE)
             .withLocation(id("pipeline/glass"))
             .withVertexShader(id("core/glass"))
             .withFragmentShader(id("core/glass"))
-            .withBindGroupLayout(GLASS_LAYOUT)
-            .withVertexBinding(0, VertexFormat.GLASS.gpu())
+            .withSampler(BACKGROUND_SAMPLER)
+            .withUniform(GLASS_BLOCK, UniformType.UNIFORM_BUFFER)
+            .withVertexFormat(VertexFormat.GLASS.gpu(), Mode.TRIANGLES)
             .build();
 
     /** Fullscreen triangle from gl_VertexID, no vertex buffer and no blending. */
@@ -104,11 +87,13 @@ public final class SpellPipelines {
             .withLocation(id("pipeline/kawase_down"))
             .withVertexShader(id("core/blur"))
             .withFragmentShader(id("core/kawase_down"))
-            .withBindGroupLayout(KAWASE_LAYOUT)
-            .withColorTargetState(new ColorTargetState(Optional.empty(), GpuFormat.RGBA8_UNORM, ColorTargetState.WRITE_ALL))
-            .withDepthStencilState(Optional.empty())
+            .withSampler(SOURCE_SAMPLER)
+            .withUniform(KAWASE_BLOCK, UniformType.UNIFORM_BUFFER)
+            .withoutBlend()
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withDepthWrite(false)
             .withCull(false)
-            .withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
+            .withVertexFormat(DefaultVertexFormat.EMPTY, Mode.TRIANGLES)
             .build();
 
     private static final List<RenderPipeline> ALL = List.of(RECTANGLE, IMAGE, TEXT, GLASS, KAWASE_DOWN);

@@ -1,10 +1,11 @@
 package dev.harlik.impl.batch;
 
-import com.mojang.blaze3d.GpuFormat;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.textures.TextureFormat;
 import dev.harlik.SpellRenderer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -76,8 +77,8 @@ public class TextureCache {
         GpuDevice device = RenderSystem.getDevice();
         GpuTexture texture = device.createTexture(() -> "spell-renderer " + location,
                 GpuTexture.USAGE_COPY_DST | GpuTexture.USAGE_TEXTURE_BINDING,
-                GpuFormat.RGBA8_UNORM, width, height, 1, 1);
-        device.createCommandEncoder().writeToTexture(texture, pixels, 0, 0, 0, 0, width, height);
+                TextureFormat.RGBA8, width, height, 1, 1);
+        device.createCommandEncoder().writeToTexture(texture, pixels, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
         STBImage.stbi_image_free(pixels);
 
         textures.add(texture);

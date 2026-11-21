@@ -1,6 +1,5 @@
 package dev.harlik.impl.batch;
 
-import com.mojang.blaze3d.GpuFormat;
 import com.mojang.blaze3d.systems.CommandEncoder;
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderPass;
@@ -8,10 +7,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.textures.TextureFormat;
 import dev.harlik.impl.gpu.FrameUniforms;
 import dev.harlik.impl.gpu.SpellFrame;
 import dev.harlik.impl.gpu.SpellPipelines;
-import java.util.Optional;
+import java.util.OptionalInt;
 import lombok.Getter;
 
 /**
@@ -48,7 +48,7 @@ public class BlurPyramid {
         GpuDevice device = RenderSystem.getDevice();
         texture = device.createTexture(() -> "spell-renderer blur pyramid",
                 GpuTexture.USAGE_COPY_DST | GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_RENDER_ATTACHMENT,
-                GpuFormat.RGBA8_UNORM, w, h, 1, levels + 1);
+                TextureFormat.RGBA8, w, h, 1, levels + 1);
         fullView = device.createTextureView(texture, 0, levels + 1);
         levelViews = new GpuTextureView[levels + 1];
         for (int i = 0; i <= levels; i++) {
@@ -64,11 +64,11 @@ public class BlurPyramid {
         for (int i = 1; i <= levels; i++) {
             int level = i;
             // Only the source level is bound for reading, so writing to level i is not a feedback loop
-            try (RenderPass pass = encoder.createRenderPass(() -> "spell-renderer kawase " + level, levelViews[i], Optional.empty())) {
+            try (RenderPass pass = encoder.createRenderPass(() -> "spell-renderer kawase " + level, levelViews[i], OptionalInt.empty())) {
                 pass.setPipeline(SpellPipelines.KAWASE_DOWN);
                 pass.bindTexture(SpellPipelines.SOURCE_SAMPLER, levelViews[i - 1], RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
                 pass.setUniform(SpellPipelines.KAWASE_BLOCK, uniforms.kawase()[i]);
-                pass.draw(3, 1, 0, 0);
+                pass.draw(0, 3);
             }
         }
     }

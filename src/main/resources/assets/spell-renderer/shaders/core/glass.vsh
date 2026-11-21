@@ -20,7 +20,7 @@ out float vSmooth;
 out vec2 vUV;
 out vec4 vGlass;
 out float vHighlight;
-out vec2 vScreenUV; // 0..1 across the target, row 0 at the bottom on both GL and Vulkan
+out vec2 vScreenUV;
 
 void main() {
     gl_Position = uProjection * vec4(aPos, 0.0, 1.0);

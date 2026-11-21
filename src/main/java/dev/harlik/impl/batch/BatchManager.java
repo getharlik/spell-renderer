@@ -21,9 +21,6 @@ public class BatchManager {
 
     public static final BatchManager INSTANCE = new BatchManager();
 
-    /** Vertex data of every run starts on this boundary. */
-    private static final int RUN_ALIGNMENT = 16;
-
     @Getter
     private final RenderBatch rectangle = new RenderBatch(SpellPipelines.RECTANGLE, VertexFormat.RECTANGLE, null);
     @Getter
@@ -47,8 +44,7 @@ public class BatchManager {
 
             // Everything is uploaded up front, uploads are not allowed while a render pass is open
             long[] offsets = new long[runs.size()];
-            long[] lengths = new long[runs.size()];
-            GpuBuffer vertices = frame.uploadVertices(packVertices(runs, offsets, lengths));
+            GpuBuffer vertices = frame.uploadVertices(packVertices(runs, offsets));
 
             boolean withGlass = runs.stream().anyMatch(run -> run.batch() == glass);
             if (withGlass) BlurPyramid.INSTANCE.ensure(frame.getWidth(), frame.getHeight());
@@ -64,7 +60,8 @@ public class BatchManager {
                     frame.beginPass();
                 }
                 if (!frame.scissors(run.scissors())) continue;
-                run.batch().draw(frame.pass(), vertices.slice(offsets[i], lengths[i]), run.entries(), uniforms);
+                int firstVertex = (int) (offsets[i] / run.batch().getStride());
+                run.batch().draw(frame.pass(), vertices, firstVertex, run.entries(), uniforms);
             }
             frame.endPass();
         } finally {
@@ -98,15 +95,14 @@ public class BatchManager {
         return runs;
     }
 
-    /** Writes the vertices of all runs into one buffer, recording where each run starts and how long it is. */
-    private ByteBuffer packVertices(List<Run> runs, long[] offsets, long[] lengths) {
+    private ByteBuffer packVertices(List<Run> runs, long[] offsets) {
         int total = 0;
         for (int i = 0; i < runs.size(); i++) {
             int floats = 0;
             for (RenderBatch.Entry e : runs.get(i).entries()) floats += e.data().length;
+            total = alignUp(total, runs.get(i).batch().getStride());
             offsets[i] = total;
-            lengths[i] = (long) floats * Float.BYTES;
-            total = alignUp(total + floats * Float.BYTES);
+            total += floats * Float.BYTES;
         }
 
         if (vertexData == null || vertexData.capacity() < total) {
@@ -125,8 +121,8 @@ public class BatchManager {
         return vertexData;
     }
 
-    private static int alignUp(int value) {
-        return (value + RUN_ALIGNMENT - 1) & -RUN_ALIGNMENT;
+    private static int alignUp(int value, int alignment) {
+        return ((value + alignment - 1) / alignment) * alignment;
     }
 
     public void destroy() {

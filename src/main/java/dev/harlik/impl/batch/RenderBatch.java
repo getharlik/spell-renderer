@@ -1,6 +1,6 @@
 package dev.harlik.impl.batch;
 
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -39,14 +39,17 @@ public class RenderBatch {
         entries.add(new Entry(z, vertexData, textureId, Scissors.current()));
     }
 
+    public int getStride() {
+        return floatsPerVertex * Float.BYTES;
+    }
+
     /** Extra uniforms and textures the pipeline needs besides the projection. */
     public RenderBatch bindings(BiConsumer<RenderPass, FrameUniforms> bindings) {
         this.bindings = bindings;
         return this;
     }
 
-    /** Draws a run of entries whose vertices were uploaded, in order, to the given slice. */
-    public void draw(RenderPass pass, GpuBufferSlice vertices, List<Entry> runEntries, FrameUniforms uniforms) {
+    public void draw(RenderPass pass, GpuBuffer vertices, int firstVertex, List<Entry> runEntries, FrameUniforms uniforms) {
         if (runEntries.isEmpty()) return;
 
         pass.setPipeline(pipeline);
@@ -55,8 +58,8 @@ public class RenderBatch {
         pass.setVertexBuffer(0, vertices);
 
         int currentTexture = runEntries.getFirst().textureId();
-        int vertexOffset = 0;
-        int runStartVertex = 0;
+        int vertexOffset = firstVertex;
+        int runStartVertex = firstVertex;
 
         for (Entry entry : runEntries) {
             if (entry.textureId() != currentTexture) {
@@ -75,7 +78,7 @@ public class RenderBatch {
             if (view == null) return; // texture failed to load
             pass.bindTexture(sampler, view, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
         }
-        pass.draw(vertexCount, 1, firstVertex, 0);
+        pass.draw(firstVertex, vertexCount);
     }
 
     public void clear() {

@@ -97,7 +97,7 @@ public class DragManager {
         float mx = mouseX(), my = mouseY();
         RenderContext context = RenderContext.GUI;
         String hit = hitTest(context, mx, my);
-        if (hit == null && mc.gui.screen() instanceof ChatScreen && isFresh(RenderContext.HUD)) {
+        if (hit == null && mc.screen instanceof ChatScreen && isFresh(RenderContext.HUD)) {
             context = RenderContext.HUD;
             hit = hitTest(context, mx, my);
         }

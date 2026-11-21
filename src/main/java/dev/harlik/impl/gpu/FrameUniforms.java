@@ -28,7 +28,7 @@ public record FrameUniforms(GpuBufferSlice projection, GpuBufferSlice glass, Gpu
 
     /** Writes and uploads the blocks. Must be called while no render pass is open. */
     public static FrameUniforms upload(SpellFrame frame, float[] projection, boolean withGlass) {
-        int align = RenderSystem.getDevice().getDeviceInfo().limits().minUniformOffsetAlignment();
+        int align = RenderSystem.getDevice().getUniformOffsetAlignment();
         int stride = Mth.roundToward(SLOT_SIZE, align);
         int levels = withGlass ? BlurPyramid.INSTANCE.getLevels() : 0;
         int slots = withGlass ? 2 + levels : 1;

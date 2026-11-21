@@ -1,9 +1,9 @@
 {
 	"required": true,
 	"package": "dev.harlik.mixin",
-	"compatibilityLevel": "JAVA_25",
-	"mixins": [
-      "GuiMixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+      "GameRendererMixin",
       "GuiRenderStateAccessor",
       "GuiRendererMixin",
       "MinecraftMixin",

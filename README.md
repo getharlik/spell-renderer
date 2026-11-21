@@ -1,6 +1,8 @@
 # Spell Renderer
 
-A fast, lightweight 2D renderer for Minecraft, designed for rendering 2D objects with a clean, fluent API. Built on Minecraft's own render API, so it works with both the OpenGL and the Vulkan backend.
+A fast, lightweight 2D renderer for Minecraft, designed for rendering 2D objects with a clean, fluent API. This branch targets Minecraft Fabric 1.21.11 and its OpenGL render backend.
+
+> The 1.21.11 port was contributed by [ThinkReally114](https://github.com/ThinkReally114), thanks!
 
 ![preview](.github/assets/preview.png)
 
@@ -18,10 +20,10 @@ A fast, lightweight 2D renderer for Minecraft, designed for rendering 2D objects
 
 ## Requirements
 
-- Minecraft: `26.2`
+- Minecraft: `1.21.11`
 - Fabric Loader: `>=0.20.1`
-- Fabric API: `0.161.0+26.2`
-- Java: `25`
+- Fabric API: `0.141.6+1.21.11`
+- Java: `21`
 
 ## Installation
 
@@ -32,11 +34,11 @@ repositories {
 }
 
 dependencies {
-    implementation "maven.modrinth:spell-renderer:26.5"
+    modImplementation "maven.modrinth:spell-renderer:26.5+1.21.11"
 
     // Optional: bundle Spell Renderer inside your mod JAR
     // so users don't need to install it separately.
-    include "maven.modrinth:spell-renderer:26.5"
+    include "maven.modrinth:spell-renderer:26.5+1.21.11"
 }
 ```
 
@@ -53,7 +55,7 @@ dependencies {
     <dependency>
         <groupId>maven.modrinth</groupId>
         <artifactId>spell-renderer</artifactId>
-        <version>26.5</version>
+        <version>26.5+1.21.11</version>
     </dependency>
 </dependencies>
 ```
@@ -61,7 +63,7 @@ dependencies {
 ### fabric.mod.json
 ```json
 "depends": {
-  "spell-renderer": "26.5"
+  "spell-renderer": "26.5+1.21.11"
 }
 ```
 

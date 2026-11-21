@@ -11,7 +11,7 @@ import dev.harlik.api.scissors.Region;
 import java.nio.ByteBuffer;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.OptionalInt;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 
@@ -43,7 +43,7 @@ public final class SpellFrame implements AutoCloseable {
                 new DynamicBuffer("spell-renderer " + c + " vertices", GpuBuffer.USAGE_VERTEX),
                 new DynamicBuffer("spell-renderer " + c + " uniforms", GpuBuffer.USAGE_UNIFORM)));
         this.encoder = RenderSystem.getDevice().createCommandEncoder();
-        this.target = Minecraft.getInstance().gameRenderer.mainRenderTarget();
+        this.target = Minecraft.getInstance().getMainRenderTarget();
         this.width = target.getColorTexture().getWidth(0);
         this.height = target.getColorTexture().getHeight(0);
     }
@@ -65,7 +65,7 @@ public final class SpellFrame implements AutoCloseable {
     /** Opens a pass on the main target. Keeps what is already drawn there and starts with the scissor disabled. */
     public RenderPass beginPass() {
         endPass();
-        pass = encoder.createRenderPass(() -> "spell-renderer " + context, target.getColorTextureView(), Optional.empty());
+        pass = encoder.createRenderPass(() -> "spell-renderer " + context, target.getColorTextureView(), OptionalInt.empty());
         return pass;
     }
 
