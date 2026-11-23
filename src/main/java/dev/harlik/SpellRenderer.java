@@ -54,11 +54,11 @@ public class SpellRenderer implements ClientModInitializer {
                         .size(48)
                         .color(Color.WHITE)
                         .submit();
-                Builder.icon("backward")
-                        .font("icons")
-                        .size(32)
-                        .pos(10, 256)
-                        .submit();
+//                Builder.icon("backward")
+//                        .font("icons")
+//                        .size(32)
+//                        .pos(10, 256)
+//                        .submit();
                 Builder.circle()
                         .pos(500, 50).radius(32).color(Color.BLACK).submit();
 
